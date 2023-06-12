@@ -48,7 +48,7 @@ class MoviesViewModel extends ViewModel
                 'genres' => $genresFormatted,
                 'title' => isset($movie['title']) ? $movie['title'] : $movie['name']
             ])->only([
-                'poster_path', 'id', 'genre_ids', 'title', 'vote_average', 'overview', 'release_date', 'genres',
+                'poster_path', 'id', 'genre_ids', 'title', 'vote_average', 'overview', 'release_date', 'first_air_date', 'genres',
             ]);
         });
     }
