@@ -28,7 +28,7 @@ Route::middleware([
     })->name('dashboard');
 
     Route::get('/', [MoviesController::class, 'index'])->name('movies.index');
-    Route::get('/movies/trending', [MoviesController::class, 'trending'])->name('movies.trending');
+    Route::get('/movies/trending', [MoviesController::class, 'index'])->name('movies.trending');
     Route::get('/movies/{movie}', [MoviesController::class, 'show'])->name('movies.show');
 });
 

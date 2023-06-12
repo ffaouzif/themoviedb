@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
-// use App\ViewModels\MovieViewModel;
+use App\ViewModels\MovieViewModel;
 use App\ViewModels\MoviesViewModel;
+use App\Models\Movie;
+use App\Models\Genre;
+use Illuminate\Support\Facades\Artisan;
 
 
 class MoviesController extends Controller
@@ -18,16 +21,16 @@ class MoviesController extends Controller
     public function index()
     {
 
-        $trendingMovies = Http::withToken(config('services.tmdb.token'))
-            ->withUrlParameters([
-                'language' => 'en-US',
-            ])
-            ->get(config('services.tmdb.endpoint') . 'trending/all/day')
-            ->json()['results'];
+        $trendingMovies = Movie::paginate(10);
+        $genres = Genre::select("id", "name")->get()->toArray();
 
-        $genres = Http::withToken(config('services.tmdb.token'))
-            ->get(config('services.tmdb.endpoint').'genre/movie/list')
-            ->json()['genres'];
+        if($trendingMovies->isEmpty() || empty($genres)){
+            // Pour optimiser le fonctionnement du backoffice
+            // récupérer les données de l’api et de les stocker dans une base de données
+            Artisan::call('movies:get_trending');
+        }
+
+        // dd($trendingMovies);
 
         $viewModel = new MoviesViewModel(
             $trendingMovies,
@@ -67,7 +70,19 @@ class MoviesController extends Controller
      */
     public function show($id)
     {
-        //
+        // $movie = Movie::find($id);
+
+        $movie = Http::withToken(config('services.tmdb.token'))
+            ->get('https://api.themoviedb.org/3/movie/'.$id.'?append_to_response=credits,videos,images')
+            ->json();
+
+        if(isset($movie['success']) && $movie['success'] == false){
+            return redirect()->route('movies.index');
+        }
+
+        $viewModel = new MovieViewModel($movie);
+
+        return view('movies.show', $viewModel);
     }
 
     /**

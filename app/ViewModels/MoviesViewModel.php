@@ -18,7 +18,7 @@ class MoviesViewModel extends ViewModel
 
     public function trendingMovies()
     {
-        return $this->formatMovies($this->trendingMovies);
+        return $this->formatMovies($this->trendingMovies->toArray());
     }
 
     public function genres()
@@ -28,9 +28,15 @@ class MoviesViewModel extends ViewModel
         });
     }
 
+    public function paginationMovies()
+    {
+        return $this->trendingMovies;
+    }
+
     private function formatMovies($movies)
     {
-        return collect($movies)->map(function ($movie) {
+        // dd($movies);
+        return collect($movies['data'])->map(function ($movie) {
             $genresFormatted = collect($movie['genre_ids'])->mapWithKeys(function ($value) {
                 return [$value => $this->genres()->get($value)];
             })->implode(', ');

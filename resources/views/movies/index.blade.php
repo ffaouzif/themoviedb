@@ -9,8 +9,10 @@
       @foreach ($trendingMovies as $movie)
         <x-movie-card :movie="$movie" />
       @endforeach
-
+ 
+      
     </div>
+    @include('elements.pagination', ['paginator' => $paginationMovies])
   </div> <!-- end trending-movies -->
 </div>
 @endsection
