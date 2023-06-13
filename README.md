@@ -22,7 +22,6 @@ Movies Laravel App using TMDB API
 
   
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
   
 
