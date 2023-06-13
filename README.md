@@ -34,7 +34,7 @@ Movies Laravel App using TMDB API
 3.  Rename or copy  `.env.example`  file to  `.env`
 4.  Set your  `TMDB_TOKEN` && `TMDB_ENDPOINT`  in your  `.env`  file. You can get an API key  [here](https://www.themoviedb.org/documentation/api). Make sure to use the "API Read Access Token (v4 auth)" from the TMDb dashboard.
 5.  `php artisan key:generate`
-6. `php artisan migrate` or import backup database from application root (themoviedb.sql)
+6. `php artisan migrate` or import backup database from application root (themoviedb.sql) => if you import databse script you can find credentials in credentials.md
 7. `php artisan movies:get_trending` use database instead of API (To optimize operations)
 8. `npm intall`
 9. `npm run dev`
