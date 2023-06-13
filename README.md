@@ -40,3 +40,9 @@ Movies Laravel App using TMDB API
 9. `npm run dev`
 10.  `php artisan serve`  or use Laravel Valet or Laravel Homestead
 11.  Visit  `localhost:8000`  in your browser
+
+### Packages used
+
+- Laravel Jetstream : For scaffolding authentication layer 
+- Livewire : For dynamic interfaces (SPA pages)
+- Laravel view models : separation of concerns before providing data to a view 
