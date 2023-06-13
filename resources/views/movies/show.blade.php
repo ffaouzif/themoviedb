@@ -1,6 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+    @if (session()->has('message'))
+        <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md my-3" role="alert">
+            <div class="flex">
+                <div>
+                    <p class="text-sm">{{ session('message') }}</p>
+                </div>
+            </div>
+        </div>
+    @endif
     <div class="movie-info border-b border-gray-800">
         <div class="container mx-auto px-4 py-16 flex flex-col md:flex-row">
             <div class="flex-none">
@@ -39,17 +48,36 @@
                     </div>
                 </div>
 
-                <div x-data="{ isOpen: false }">
+                <div x-data="{ isOpen: false, showEditModal: false }">
                     @if (count($movie['videos']['results']) > 0)
                         <div class="mt-12">
                             <button @click="isOpen = true"
-                                class="flex inline-flex items-center bg-orange-500 text-gray-900 rounded font-semibold px-5 py-4 hover:bg-orange-600 transition ease-in-out duration-150">
+                                class="py-1 flex inline-flex items-center bg-orange-500 text-gray-900 rounded font-semibold px-5 py-4 hover:bg-orange-600 transition ease-in-out duration-150">
                                 <svg class="w-6 fill-current" viewBox="0 0 24 24">
                                     <path d="M0 0h24v24H0z" fill="none" />
                                     <path
                                         d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
                                 </svg>
                                 <span class="ml-2">Play Trailer</span>
+                            </button>
+
+                            <button @click="showEditModal = true" __wire:click="edit({{ $movie['id'] }})"
+                                class="flex inline-flex items-center bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded font-semibold px-5 py-4 transition ease-in-out duration-150">
+                                <x-mysvg name="pencil" class="py-1" />
+                                <span class="ml-2">Edit</span>
+                            </button>
+
+
+                            {{-- <button @click="showEditModal = true"
+                                class="flex inline-flex items-center bg-green-500 text-white-900 rounded font-semibold px-5 py-4 hover:bg-green-600 transition ease-in-out duration-150">
+                                <x-mysvg name="pencil" class="py-1" />
+                                <span class="ml-2">Edit</span>
+                            </button> --}}
+
+                            <button @click="isRemove = true"
+                                class="flex inline-flex items-center bg-red-600 text-white-900 rounded font-semibold px-5 py-4 hover:bg-red-700 transition ease-in-out duration-150">
+                                <x-mysvg name="trash" class="py-1" />
+                                <span class="ml-2">Remove</span>
                             </button>
                         </div>
 
@@ -72,6 +100,17 @@
                                                     allowfullscreen></iframe>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <template x-if="showEditModal">
+                            <div style="background-color: rgba(0, 0, 0, .5);"
+                                class="fixed top-0 left-0 w-full h-full flex items-center shadow-lg overflow-y-auto">
+                                <div class="container mx-auto lg:px-32 rounded-lg overflow-y-auto">
+                                    <div class="bg-gray-900 rounded">
+                                        @include('movies.modal-edit', ['movie' => $movie])
                                     </div>
                                 </div>
                             </div>
@@ -142,4 +181,43 @@
             </div>
         </div>
     </div> <!-- end movie-images -->
+@endsection
+
+@section('script')
+    <script>
+        $(document).ready(function() {
+            $('form#edit-movie').submit(function(e) {
+                e.preventDefault();
+                alert('wsal')
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    url: "{{ route('movies.update', $movie['id']) }}",
+                    method: 'put',
+                    data: {
+                        title: $('input#title').val(),
+                        overview: $('textarea#overview').val(),
+                        id: $(':hidden#movie-id').val();
+                    },
+                    success: function(result) {
+                        if (result.errors) {
+                            $('.alert-danger').html('');
+
+                            $.each(result.errors, function(key, value) {
+                                $('.alert-danger').show();
+                                $('.alert-danger').append('<li>' + value +'</li>');
+                            });
+                        } else {
+                            $('.alert-danger').hide();
+                            $('#open').hide();
+                            $('#myModal').modal('hide');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

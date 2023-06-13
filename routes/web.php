@@ -30,5 +30,6 @@ Route::middleware([
     Route::get('/', [MoviesController::class, 'index'])->name('movies.index');
     Route::get('/movies/trending', [MoviesController::class, 'index'])->name('movies.trending');
     Route::get('/movies/{movie}', [MoviesController::class, 'show'])->name('movies.show');
+    Route::put('movies/{movie}', [MoviesController::class, 'update'])->name('movies.update');
 });
 
